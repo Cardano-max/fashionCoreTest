@@ -895,6 +895,11 @@ def worker():
         time.sleep(0.01)
         if len(async_tasks) > 0:
             task = async_tasks.pop(0)
+            if len(task.args) > 0:  # Add this check
+        else:
+            generate_image_grid = False
+
+
             generate_image_grid = task.args.pop(0)
 
             try:
