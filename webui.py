@@ -25,15 +25,15 @@ from modules.ui_gradio_extensions import reload_javascript
 from modules.auth import auth_enabled, check_auth
 from modules.util import is_json
 
-# PHOTOPEA_MAIN_URL = "https://www.photopea.com/"
-# PHOTOPEA_IFRAME_ID = "webui-photopea-iframe"
-# PHOTOPEA_IFRAME_HEIGHT = 684
-# PHOTOPEA_IFRAME_WIDTH = "100%"
-# PHOTOPEA_IFRAME_LOADED_EVENT = "onPhotopeaLoaded"
+PHOTOPEA_MAIN_URL = "https://www.photopea.com/"
+PHOTOPEA_IFRAME_ID = "webui-photopea-iframe"
+PHOTOPEA_IFRAME_HEIGHT = 684
+PHOTOPEA_IFRAME_WIDTH = "100%"
+PHOTOPEA_IFRAME_LOADED_EVENT = "onPhotopeaLoaded"
 
 
-# def get_photopea_url_params():
-#     return "#%7B%22resources%22:%5B%22data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIAAQMAAADOtka5AAAAAXNSR0IB2cksfwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAANQTFRF////p8QbyAAAADZJREFUeJztwQEBAAAAgiD/r25IQAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfBuCAAAB0niJ8AAAAABJRU5ErkJggg==%22%5D%7D"
+def get_photopea_url_params():
+    return "#%7B%22resources%22:%5B%22data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIAAQMAAADOtka5AAAAAXNSR0IB2cksfwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAANQTFRF////p8QbyAAAADZJREFUeJztwQEBAAAAgiD/r25IQAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfBuCAAAB0niJ8AAAAABJRU5ErkJggg==%22%5D%7D"
 
 
 def get_task(*args):
@@ -128,25 +128,25 @@ with shared.gradio_root:
                                      elem_id='final_gallery',
                                      value=["assets/favicon.png"],
                                      preview=True)
-            # with gr.Tab("Photopea"):
-            #     with gr.Row():
-            #         photopea = gr.HTML(
-            #             f"""<iframe id="{PHOTOPEA_IFRAME_ID}" 
-            #             src = "{PHOTOPEA_MAIN_URL}{get_photopea_url_params()}" 
-            #             width = "{PHOTOPEA_IFRAME_WIDTH}" 
-            #             height = "{PHOTOPEA_IFRAME_HEIGHT}"
-            #             onload = "{PHOTOPEA_IFRAME_LOADED_EVENT}(this)">"""
-            #         )
-            #     gr.Markdown("Powered by [🦜 Photopea API](https://www.photopea.com/api)")
-            # with gr.Tab("rembg"):
-            #     with gr.Column(scale=1):
-            #         rembg_input = grh.Image(label='Drag above image to here', source='upload', type='filepath', scale=20)
-            #         rembg_button = gr.Button(value="Remove Background", interactive=True, scale=1)
-            #     with gr.Column(scale=3):
-            #         rembg_output = grh.Image(label='rembg Output', interactive=False, height=380)
-            #     gr.Markdown("Powered by [🪄 rembg 2.0.53](https://github.com/danielgatis/rembg/releases/tag/v2.0.53)")
-            # rembg_button.click(rembg_run, inputs=rembg_input, outputs=rembg_output, show_progress="full") 
-            with gr.Tab("Online"):
+            with gr.Column(visible=False):
+                with gr.Row():
+                    photopea = gr.HTML(
+                        f"""<iframe id="{PHOTOPEA_IFRAME_ID}" 
+                        src = "{PHOTOPEA_MAIN_URL}{get_photopea_url_params()}" 
+                        width = "{PHOTOPEA_IFRAME_WIDTH}" 
+                        height = "{PHOTOPEA_IFRAME_HEIGHT}"
+                        onload = "{PHOTOPEA_IFRAME_LOADED_EVENT}(this)">"""
+                    )
+                gr.Markdown("Powered by [🦜 Photopea API](https://www.photopea.com/api)")
+            with gr.Column(visible=False):
+                with gr.Column(scale=1):
+                    rembg_input = grh.Image(label='Drag above image to here', source='upload', type='filepath', scale=20)
+                    rembg_button = gr.Button(value="Remove Background", interactive=True, scale=1)
+                with gr.Column(scale=3):
+                    rembg_output = grh.Image(label='rembg Output', interactive=False, height=380)
+                gr.Markdown("Powered by [🪄 rembg 2.0.53](https://github.com/danielgatis/rembg/releases/tag/v2.0.53)")
+            rembg_button.click(rembg_run, inputs=rembg_input, outputs=rembg_output, show_progress="full") 
+            with gr.Column(visible=False):
                 with gr.Tab("Demos"):
                     for name in load_demos_names():
                         url = load_demos_url(name)
@@ -350,7 +350,7 @@ with shared.gradio_root:
             ip_advanced.change(lambda: None, queue=False, show_progress=False, _js=down_js)
 
             current_tab = gr.Textbox(value='uov', visible=False)
-            # uov_tab.select(lambda: 'uov', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
+            uov_tab.select(lambda: 'uov', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
             inpaint_tab.select(lambda: 'inpaint', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
             ip_tab.select(lambda: 'ip', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
             desc_tab.select(lambda: 'desc', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
@@ -461,7 +461,7 @@ with shared.gradio_root:
                                                        show_progress=False).then(
                     lambda: None, _js='()=>{refresh_style_localization();}')
 
-            with gr.Column(visible=False):
+            with gr.Tab(label='Models'):
                 with gr.Group():
                     with gr.Row():
                         base_model = gr.Dropdown(label='Base Model (SDXL only)', choices=modules.config.model_filenames, value=modules.config.default_base_model_name, show_label=True)
@@ -780,7 +780,7 @@ with shared.gradio_root:
 
         ctrls += [base_model, refiner_model, refiner_switch] + lora_ctrls
         ctrls += [input_image_checkbox, current_tab]
-        # ctrls += [uov_method, uov_input_image]
+        ctrls += [uov_method, uov_input_image]
         ctrls += [outpaint_selections, inpaint_input_image, inpaint_additional_prompt, inpaint_mask_image]
         ctrls += [disable_preview, disable_intermediate_results, black_out_nsfw]
         ctrls += [adm_scaler_positive, adm_scaler_negative, adm_scaler_end, adaptive_cfg]
@@ -856,8 +856,8 @@ with shared.gradio_root:
                 return trigger_describe(mode, img)
             return gr.update(), gr.update()
 
-        # uov_input_image.upload(trigger_uov_describe, inputs=[desc_method, uov_input_image, prompt],
-        #                outputs=[prompt, style_selections], show_progress=True, queue=True)
+        uov_input_image.upload(trigger_uov_describe, inputs=[desc_method, uov_input_image, prompt],
+                       outputs=[prompt, style_selections], show_progress=True, queue=True)
 
 def dump_default_english_config():
     from modules.localization import dump_english_config
