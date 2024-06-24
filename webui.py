@@ -355,7 +355,7 @@ with shared.gradio_root:
                 if not args_manager.args.disable_preset_selection:
                     preset_selection = gr.Radio(label='Preset',
                                                 choices=modules.config.available_presets,
-                                                value=args_manager.args.preset if args_manager.args.preset else "Initial",
+                                                value=args_manager.args.preset if args_manager.args.preset else "initial",
                                                 interactive=True)
                 
                 aspect_ratios_selection = gr.Radio(label='Aspect Ratios', choices=modules.config.available_aspect_ratios,
